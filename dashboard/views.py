@@ -66,10 +66,10 @@ class DashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Текущий пользователь
+        # Current user
         context['user'] = self.request.user
 
-        # Пользователь, который привел текущего пользователя в систему
+        # The user who brought the current user into the system
         profile = Profile.objects.get(user=self.request.user)
         if profile.parent:
             context['parent'] = profile.parent.user
@@ -78,37 +78,37 @@ class DashboardView(TemplateView):
             context['parent'] = None
             parent_amount = 0
 
-        # Процент от того, кто пригласил тебя
+        # Percentage of who invited you
         context['amount_from_parent'] = parent_amount
 
-        # Рефералы (Последователи)
+        # Referrals (Followers)
         referrals = profile.get_descendants().filter(level__lte=profile.level + 4)
         context['referrals'] = referrals
 
-        # Код реферальный конкретного пользователя.
+        # Referral code for a specific user.
         if not self.request.user.is_superuser:
             context['referral_code'] = Referral.objects.get(user=self.request.user)
 
-        # Текущий год и месяц при обращении к страницы
+        # Current year and month when the page is accessed            
         current_year = date.today().year
         current_month = date.today().month
 
-        # Счет пользователя за текущий месяц
+        # User account for the current month
         current_month_amount = 0
-
-        # Количество пользователей от которых получает бонусы в каждом уровне
+        
+        # Number of users from which receives bonuses in each level
         first_level_bonus_referral_count = 0
         second_level_bonus_referral_count = 0
         third_level_bonus_referral_count = 0
         fourth_level_bonus_referral_count = 0
 
-        # Полученная сумма денег с каждого уровня.
+        # Received amount of money from each level.
         first_level_amount = 0
         second_level_amount = 0
         third_level_amount = 0
         fourth_level_amount = 0
 
-        # Количество последователей в каждом уровне
+        # Number of followers in each level
         first_level_referral_count = 0
         second_level_referral_count = 0
         third_level_referral_count = 0
@@ -158,20 +158,20 @@ class DashboardView(TemplateView):
         context['third_level_referral_count'] = third_level_referral_count
         context['fourth_level_referral_count'] = fourth_level_referral_count
 
-        # Накопления за предыдущие месяцы
+        # Accumulations for previous months
         context['last_month_amount'] = profile.amount
 
-        # Общие накопления
+        # General savings
         if profile.amount is None:
             amount = current_month_amount + parent_amount
         else:
             amount = current_month_amount + parent_amount + profile.amount
         context['amount'] = amount
 
-        # Количество последователей
+        # Number of followers
         context['referrals_count'] = referrals.count()
 
-        # Статус отплаты текущего пользователя за текущий месяц
+        # Current user's repayment status for the current month
         payment = Payment.objects.filter(
             user=self.request.user,
             date__month=current_month,
@@ -180,31 +180,31 @@ class DashboardView(TemplateView):
         ).exists()
         context['payment_status'] = payment
 
-        # Информация о том, сколько осталось накопить до преобретения пакета
+        # Information about how much is left to accumulate before purchasing the package
         global accumulate_status, accumulate_text, accumulate
         if amount <= int(CLASSIC):
-            accumulate_status = 'Пакет "Classic"'
-            accumulate_text = 'Необходимо накопить: ' + CLASSIC
-            accumulate = "Осталось накопить: " + str(int(CLASSIC) - amount)
+            accumulate_status = '"Classic" package'
+            accumulate_text = 'Need to accumulate: ' + CLASSIC
+            accumulate = "Remaining to accumulate: " + str(int(CLASSIC) - amount)
         elif int(CLASSIC) < amount <= int(SILVER):
-            accumulate_status = 'Пакет "Silver"'
-            accumulate_text = 'Необходимо накопить: ' + str(SILVER) + '. Бонус + ' + str(SILVER_BONUS)
+            accumulate_status = 'Package "Silver"'
+            accumulate_text = 'Необходимо накопить: ' + str(SILVER) + '. Bonus + ' + str(SILVER_BONUS)
             accumulate = int(SILVER) - amount
         elif int(SILVER) < amount <= int(GOLD):
-            accumulate_status = 'Пакет "Gold"'
-            accumulate_text = 'Необходимо накопить: ' + str(GOLD) + '. Бонус + ' + str(GOLD_BONUS)
+            accumulate_status = 'Package "Gold"'
+            accumulate_text = 'Need to accumulate: ' + str(GOLD) + '. Bonus + ' + str(GOLD_BONUS)
             accumulate = int(SILVER) - amount
         elif int(SILVER) < amount <= int(PLATINUM):
             accumulate_status = 'Пакет "Platinum"'
-            accumulate_text = 'Необходимо накопить: ' + str(PLATINUM) + '. Бонус + ' + str(PLATINUM_BONUS)
+            accumulate_text = 'Need to accumulate: ' + str(PLATINUM) + '. Bonus + ' + str(PLATINUM_BONUS)
             accumulate = int(PLATINUM) - amount
         elif int(PLATINUM) < amount <= int(BRILLIANT):
-            accumulate_status = 'Пакет "Brilliant"'
-            accumulate_text = 'Необходимо накопить: ' + str(BRILLIANT) + '. Бонус + ' + str(BRILLIANT_BONUS)
+            accumulate_status = 'Brilliant Package'
+            accumulate_text = 'Need to accumulate: ' + str(BRILLIANT) + '. Bonus + ' + str(BRILLIANT_BONUS)
             accumulate = int(BRILLIANT) - amount
         elif amount > int(BRILLIANT):
-            accumulate_status = 'Пакет "Brilliant"'
-            accumulate_text = 'Вы накопили нужную сумму. Мы дарим вам ' + str(BRILLIANT_BONUS)
+            accumulate_status = 'Package "Brilliant"'
+            accumulate_text = 'You have accumulated the required amount. We give you' + str(BRILLIANT_BONUS)
         context['accumulate_status'] = accumulate_status
         context['accumulate_text'] = accumulate_text
         context['accumulate'] = accumulate
@@ -234,17 +234,17 @@ def username_autocomplete(request):
 def search_user_information(request, username):
     global accumulate_status, accumulate_text, accumulate, amount_from_parent, referral_code
 
-    # Находим пользователя по введеному username
+    # Find the user by the entered username
     user = User.objects.get(username__icontains=username)
 
-    # Его реферальный код
+    # His referral code
     if not user.is_superuser:
         referral_code = Referral.objects.get(user=user)
-
-    # Инициализируем словарь
+        
+    # Initialize dictionary
     data = dict()
 
-    # Пользователь, который привел текущего пользователя в систему
+    # The user who brought the current user into the system
     profile = Profile.objects.get(user=user)
     if profile.parent:
         parent = profile.parent.user
@@ -252,30 +252,30 @@ def search_user_information(request, username):
     else:
         parent = None
         amount_from_parent = 0
-
-    # Рефералы (Последователи)
+        
+    # Referrals (Followers)
     referrals = profile.get_descendants().filter(level__lte=profile.level + 4)
 
-    # Текущий год и месяц при обращении к страницы
+    # Current year and month when the page is accessed
     current_year = date.today().year
     current_month = date.today().month
 
-    # Счет пользователя за текущий месяц
+    # User account for the current month
     current_month_amount = 0
 
-    # Количество пользователей от которых получает бонусы в каждом уровне
+    # Number of users from which receives bonuses in each level
     first_level_bonus_referral_count = 0
     second_level_bonus_referral_count = 0
     third_level_bonus_referral_count = 0
     fourth_level_bonus_referral_count = 0
 
-    # Полученная сумма денег с каждого уровня.
+    # Received amount of money from each level.
     first_level_amount = 0
     second_level_amount = 0
     third_level_amount = 0
     fourth_level_amount = 0
 
-    # Количество последователей в каждом уровне
+    # Number of followers in each level
     first_level_referral_count = 0
     second_level_referral_count = 0
     third_level_referral_count = 0
@@ -312,19 +312,19 @@ def search_user_information(request, username):
 
     bonus_referral_count = first_level_bonus_referral_count + second_level_bonus_referral_count + third_level_bonus_referral_count + fourth_level_bonus_referral_count
 
-    # Накопления за предыдущие месяцы
+    # Accumulations for previous months
     last_month_amount = profile.amount
 
-    # Общие накопления
+    # General savings
     if profile.amount is None:
         amount = current_month_amount
     else:
         amount = current_month_amount + profile.amount + amount_from_parent
-
-    # Количество последователей
+        
+    # Number of followers
     referrals_count = referrals.count()
 
-    # Информация о том, сколько осталось накопить до преобретения пакета
+    # Information about how much is left to accumulate before purchasing the package
     if amount <= int(CLASSIC):
         accumulate_status = 'Пакет "Classic"'
         accumulate_text = 'Необходимо накопить: ' + str(CLASSIC)
@@ -349,7 +349,7 @@ def search_user_information(request, username):
         accumulate_status = 'Пакет "Brilliant"'
         accumulate_text = 'Вы накопили нужную сумму. Мы дарим вам ' + str(BRILLIANT_BONUS)
 
-    # Формируем контекстные данные которые будум передовать в шаблон
+    # We form the context data that we will transfer to the template
     context = {
         'user': user,
         'request_user': request.user,
@@ -383,59 +383,60 @@ def search_user_information(request, username):
 
 
 def specify_parent(request):
-    # Инициализируем словарь
+    
+    # Initialize dictionary
     data = dict()
 
-    # Если "POST" запрос
+    # If "POST" request
     if request.method == 'POST':
 
-        # Инициализируем форму
+        # Initialize the form
         form = SpecifyParentForm(request.POST)
 
-        # Если форма валидна
+        # If the form is valid
         if form.is_valid():
 
-            # Передаем в словарь ключ - значение для проверки в JS
+            # Passing the key - value to the dictionary to check in JS
             data['form_is_valid'] = True
 
-            # Проверяем есть ли пользователь с подобной электронной почтой
+            # Check if there is a user with the same email
             if User.objects.get(email=form.cleaned_data['email']) is not None:
                 user = User.objects.get(email=form.cleaned_data['email'])
             else:
                 user = None
 
-            # Если пользователь существует
+            # If the user exists
             if user:
-                # Передаем в словарь ключ - значение для проверки в JS
+                # Passing the key - value to the dictionary to check in JS
                 data['user_exist'] = True
 
-                # Профиль пользователя, который делал запрос
+                # Profile of the user who made the request
                 profile = Profile.objects.get(user=request.user)
-                # Профиль пользователя, который был указан как родитель
+                # The profile of the user that was listed as the parent
                 parent_profile = Profile.objects.get(user=user)
-                # Устанавливаем родителя
+                # Set the parent
                 profile.parent = parent_profile
-                # Сохраняем данные в профиль
+                # Save data to profile
                 profile.save()
-                # Процент от родителя (5 %)
+                # Percentage of parent (5%)
                 ancestor_percentage = (int(PRICE) * 5) / 100
-                # Передаем переменные в шаблон
+                # Pass variables to the template
                 context = {
                     'user': request.user,
                     'request_user': request.user,
                     'parent': profile.parent.user,
                     'amount_from_parent': ancestor_percentage,
                 }
-                # Инициализируем блок с информацией о родителе
+                # Initialize the block with information about the parent
                 data['parent_html'] = render_to_string('parent.html', context)
 
-                # Инициализируем начальные переменные
+                # Initialize initial variables
                 current_month_amount = 0
                 current_year = date.today().year
                 current_month = date.today().month
-                # Все рефералы(последователи) текущего пользователя
+                # All referrals (followers) of the current user
                 referrals = profile.get_descendants().filter(level__lte=profile.level + 4)
-                # Подсчет накопленной сумму за текущий месяц по каждому уровню
+                # Calculation of the accumulated amount for the current month for each level
                 for referral in referrals:
                     if Payment.objects.filter(
                             user=referral.user,
@@ -452,22 +453,22 @@ def specify_parent(request):
                         elif level == 4:
                             current_month_amount = current_month_amount + (int(PRICE) * 1 / 100)
 
-                # Если нет накоплений за предыдущие месяцы
+                # If there are no savings for previous months                            
                 if not profile.amount:
                     last_amount = 0
                 else:
                     last_amount = profile.amount
-                # Накопления за текущий месяц
+                # Savings for the current month    
                 current_month_amount = current_month_amount + ancestor_percentage
-                # Общие накопления
+                # General savings
                 amount = current_month_amount + last_amount
-                # Инициализируем и передаем переменные в блоки о накоплениях на текущий и прошлые месяцы
+                # Initialize and pass variables to blocks about savings for the current and previous months
                 context = {'amount': amount, }
                 data['amount_html'] = render_to_string('amount.html', context)
                 context = {'current_month_amount': current_month_amount, }
                 data['current_month_amount_html'] = render_to_string('current_month_amount.html', context)
 
-                # Блок с информацией о пакете
+                # Block with information about the package
                 global accumulate, accumulate_status, accumulate_text
                 if amount <= int(CLASSIC):
                     accumulate_status = 'Пакет "Classic"'
@@ -502,9 +503,8 @@ def specify_parent(request):
             data['form_is_valid'] = False
     else:
         form = SpecifyParentForm()
-    # Инициализируем форму и передаем в нее переменную
+    # Initialize the form and pass a variable to it        
     context = {'specify_parent_form': form}
     data['html_form'] = render_to_string('specify_parent.html', context, request=request)
-
-    # Возвращаем JSON
+    # Return JSON
     return JsonResponse(data)
