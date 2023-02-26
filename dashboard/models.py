@@ -17,23 +17,24 @@ from django.core.urlresolvers import reverse_lazy
 class Payment(models.Model):
     user = models.ForeignKey(
         User,
-        verbose_name='Автор платежа',
+        verbose_name='Payment author',
     )
     date = models.DateField(
-        verbose_name='День платежа',
+        verbose_name='Payment day',
         default=date.today,
         blank=False,
-    )
+    ) 
     paid = models.BooleanField(
-        verbose_name='Статус оплаты',
+        verbose_name='Payment State',
         default=False,
         blank=False,
     )
 
+
     class Meta:
         db_table = 'payment'
-        verbose_name = 'Платеж'
-        verbose_name_plural = 'Платежы'
+        verbose_name = 'Payment'
+        verbose_name_plural = 'Payments'
         ordering = ["date"]
 
     def __str__(self):
@@ -45,14 +46,14 @@ class Profile(MPTTModel):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        verbose_name='Пользователь',
+        verbose_name='User',
     )
     referral = models.OneToOneField(
         Referral,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
-        verbose_name='Реферал',
+        verbose_name='Referral',
     )
     parent = TreeForeignKey(
         'self',
@@ -60,47 +61,47 @@ class Profile(MPTTModel):
         related_name='children',
         blank=True,
         null=True,
-        verbose_name='Родитель пользователя',
+        verbose_name='User parent',
     )
     amount = models.FloatField(
         blank=True,
         null=True,
-        verbose_name='Накопленные бонусы за предыдущие месяцы',
+        verbose_name='Accumulated bonuses for previous months',
     )
     birth_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name='Дата рождения',
+        verbose_name='Date of birth',
     )
     address = models.CharField(
         blank=False,
         max_length=500,
-        verbose_name='Адрес проживания',
+        verbose_name='Address of residence',
     )
     phone_number = PhoneNumberField(
         blank=False,
-        verbose_name='Номер телефона',
+        verbose_name='Phone number',
     )
     first_name = models.CharField(
         max_length=250,
         blank=False,
-        verbose_name='Имя',
+        verbose_name='Name',
     )
     last_name = models.CharField(
         max_length=250,
         blank=False,
-        verbose_name='Фамилия',
+        verbose_name='Family name',
     )
     middle_name = models.CharField(
         max_length=250,
         blank=False,
-        verbose_name='Отчетство',
+        verbose_name='Surname',
     )
 
     class Meta:
         db_table = 'profile'
-        verbose_name = 'Профиль пользователя'
-        verbose_name_plural = 'Профили пользователей'
+        verbose_name = 'User profile'
+        verbose_name_plural = 'User profiles'
 
     class MPTTMeta:
         order_insertion_by = ['user']
