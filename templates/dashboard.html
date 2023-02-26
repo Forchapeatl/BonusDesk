@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/autocomplete_bootstrap.css' %}"/>
 {% endblock %}
 
-{% block title %}Личный кабинет{% endblock %}
+{% block title %}Personal Area{% endblock %}
 
 {% block header %}{% include 'header.html' %}{% endblock %}
 
@@ -16,7 +16,7 @@
         <div class="container" id="search-container">
             <div class="card text-center bg-light mt-3 mb-3">
                 <div class="card-header text-uppercase">
-                    <i class="fa fa-search" aria-hidden="true"></i>&nbsp;<span>Поиск</span></div>
+                    <i class="fa fa-search" aria-hidden="true"></i>&nbsp;<span>Search</span></div>
                 <div class="card-body">
                     <form class="form-inline search-form">
                         <div class="form-group flex">
@@ -25,7 +25,7 @@
                         </div>
                     </form>
                     <p class="card-text mt-3">
-                        <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;<span>Чтобы вывести информацию о пользователе, введите логин (username) этого пользователя.</span>
+                        <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;<span>To display user information, enter login (username) this user.</span>
                     </p>
                 </div>
             </div>
@@ -33,7 +33,7 @@
         <div class="container" id="error-message">
             <div class="alert alert-danger text-center" role="alert">
                 <i class="fa fa-exclamation-triangle"
-                   aria-hidden="true"></i>&nbsp;<span><strong>ERROR</strong></span><br><span>Попробуйте ввести логин пользователя еще раз!</span><br><span>Вероятно пользователя с подобным логином нет в системе.</span>
+                   aria-hidden="true"></i>&nbsp;<span><strong>ERROR</strong></span><br><span>Try entering the username again!</span><br><span>There is probably no user with a similar login in the system.</span>
             </div>
         </div>
         <div class="card" id="loading-icon">
@@ -107,9 +107,9 @@
                             $btnCopy.on('click', function () {
                                 let clipboard = new ClipboardJS('#copy-referral-link-btn');
                                 clipboard.on('success', function (e) {
-                                    $btnCopy.text("Сохранено в буфере обмена");
+                                    $btnCopy.text("Saved to clipboard");
                                     setTimeout(function () {
-                                        $btnCopy.text('Копировать реферальную ссылку');
+                                        $btnCopy.text('Copy referral link');
                                     }, 2000);
                                 });
                             });
@@ -133,9 +133,9 @@
             $btnCopy.on('click', function () {
                 let clipboard = new ClipboardJS('#copy-referral-link-btn');
                 clipboard.on('success', function (e) {
-                    $btnCopy.text("Сохранено в буфер обмена");
+                    $btnCopy.text("Saved to clipboard");
                     setTimeout(function () {
-                        $btnCopy.text('Копировать реферальную ссылку');
+                        $btnCopy.text('Copy referral link');
                     }, 2000);
                 });
             });
