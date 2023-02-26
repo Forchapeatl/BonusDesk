@@ -2,7 +2,7 @@
 
 {% load static %}}
 
-{% block title %}Регистрация{% endblock %}
+{% block title %}Registration{% endblock %}
 
 {% block style %}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" type="text/css" media="all" rel="stylesheet"/>
@@ -31,9 +31,9 @@
         <div class="container w-100 mt-5 mb-5">
             <div class="card">
                 <article class="card-body">
-                    <h4 class="card-title mt-3 text-center">Создай свою учетную запись</h4>
+                    <h4 class="card-title mt-3 text-center">Create your account</h4>
                     <p class="text-center">
-                        <span>Начни прямо сейчас</span>
+                        <span>Start right now</span>
                     </p>
                     <form method="post">
                         {% csrf_token %}
@@ -130,7 +130,7 @@
                             </div>
                         </div>
                         <div class="alert alert-info text-center p-2 mt-3 mb-3">
-                            <span>Введите номер телефона в соответствии со следующим форматом: +(код страны) (номер телефона). Например: +7 705 741 96 36</span>
+                            <span>Enter a phone number according to the following format: +(country code) (phone number). For example: +7 705 741 96 36</span>
                         </div>
                         <label class='font-weight-bold custom-label'
                                for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
@@ -144,7 +144,7 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary btn-block">
-                                <i class="fa fa-plug" aria-hidden="true"></i>&nbsp;<span>Зарегистрироваться</span>
+                                <i class="fa fa-plug" aria-hidden="true"></i>&nbsp;<span>Register</span>
                             </button>
                         </div>
 
@@ -214,7 +214,7 @@
                             </div>
                         {% endif %}
                         <p class="text-center p-text-info">
-                            <span>Уже есть учетная запись?</span>&nbsp;<a href="{% url 'account_login' %}" style="text-decoration: none;">Войти</a>
+                            <span>Already have an account?</span>&nbsp;<a href="{% url 'account_login' %}" style="text-decoration: none;">To come in</a>
                         </p>
 
                     </form>
